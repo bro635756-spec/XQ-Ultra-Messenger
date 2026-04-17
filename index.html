@@ -3,217 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XQ Ultra | Secure ID Messaging</title>
+    <title>XQ Ultra | Server Management Engine</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --xq-bg: #050608; --xq-side: #0e1117; --xq-primary: #5865f2;
-            --xq-accent: #00ff9d; --xq-text: #e1e1e1; --xq-glass: rgba(255, 255, 255, 0.05);
-        }
+        :root { --xq-bg: #050608; --xq-side: #0e1117; --xq-primary: #5865f2; --xq-accent: #00ff9d; --xq-text: #e1e1e1; --xq-danger: #ff4757; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
-        body { background: var(--xq-bg); color: var(--xq-text); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        body { background: var(--xq-bg); color: var(--xq-text); height: 100vh; display: flex; overflow: hidden; }
 
-        /* AUTH & ACCOUNT CREATION */
-        .panel { width: 100%; max-width: 450px; padding: 40px; background: var(--xq-side); border-radius: 30px; border: 1px solid var(--xq-glass); text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
-        .xq-input { width: 100%; background: #000; border: 1px solid #2d3436; color: #fff; padding: 15px; border-radius: 12px; margin-bottom: 15px; outline: none; }
-        .btn-main { width: 100%; padding: 15px; border-radius: 12px; border: none; background: var(--xq-primary); color: #fff; font-weight: 700; cursor: pointer; transition: 0.3s; }
-        .btn-main:hover { opacity: 0.8; transform: translateY(-2px); }
+        /* SERVER SIDEBAR */
+        .server-bar { width: 72px; background: #000; display: flex; flex-direction: column; align-items: center; padding: 12px 0; gap: 8px; border-right: 1px solid rgba(255,255,255,0.05); }
+        .server-icon { width: 48px; height: 48px; background: var(--xq-side); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; border: 2px solid transparent; }
+        .server-icon:hover { border-radius: 15px; background: var(--xq-primary); }
 
-        /* MAIN APP */
-        #app { display: none; width: 100%; height: 100vh; flex-direction: row; }
-        .sidebar { width: 320px; background: var(--xq-side); border-right: 1px solid var(--xq-glass); display: flex; flex-direction: column; padding: 20px; }
-        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--xq-bg); }
-        
-        .id-badge { background: #000; padding: 10px; border-radius: 10px; font-family: monospace; font-size: 0.75rem; color: var(--xq-accent); border: 1px solid var(--xq-accent); margin-bottom: 20px; cursor: pointer; }
-        
-        .contact-list { flex: 1; overflow-y: auto; margin-top: 20px; }
-        .contact-item { padding: 12px; border-radius: 10px; background: var(--xq-glass); margin-bottom: 10px; cursor: pointer; font-size: 0.9rem; border: 1px solid transparent; }
-        .contact-item:hover { border-color: var(--xq-primary); }
+        /* CHANNEL SIDEBAR */
+        .channel-sidebar { width: 240px; background: var(--xq-side); display: flex; flex-direction: column; padding: 15px; }
+        .channel-item { padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-bottom: 2px; color: #8e9297; transition: 0.2s; display: flex; justify-content: space-between; }
+        .channel-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .channel-item.active { background: rgba(88, 101, 242, 0.2); color: #fff; }
 
-        .messages { flex: 1; padding: 25px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 12px 18px; border-radius: 18px; max-width: 70%; font-size: 0.9rem; line-height: 1.4; }
-        .msg-me { align-self: flex-end; background: var(--xq-primary); border-bottom-right-radius: 4px; }
-        .msg-other { align-self: flex-start; background: var(--xq-side); border: 1px solid var(--xq-glass); border-bottom-left-radius: 4px; }
+        /* MAIN CONTENT */
+        .main-app { flex: 1; display: flex; flex-direction: column; background: #36393f; }
+        .chat-area { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; background: var(--xq-bg); }
+        .stream-area { display: none; height: 300px; background: #000; margin: 10px; border-radius: 10px; position: relative; overflow: hidden; }
+        video { width: 100%; height: 100%; object-fit: cover; }
 
-        .input-box { padding: 20px; background: var(--xq-side); display: flex; gap: 10px; border-top: 1px solid var(--xq-glass); }
-        
-        /* SHARE MODAL */
-        .share-btn { background: #25d366; color: white; padding: 8px; border-radius: 8px; font-size: 0.8rem; border: none; cursor: pointer; margin-top: 5px; width: 100%; }
+        /* UI ELEMENTS */
+        .input-box { padding: 20px; background: var(--xq-side); display: flex; gap: 10px; }
+        .xq-input { flex: 1; background: #202225; border: none; padding: 12px; border-radius: 8px; color: #fff; outline: none; }
+        .btn { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-primary { background: var(--xq-primary); color: #fff; }
+        .btn-stream { background: var(--xq-accent); color: #000; }
+
+        /* MODALS */
+        #authOverlay { position: fixed; inset: 0; background: var(--xq-bg); z-index: 1000; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <div id="auth" class="panel">
-        <h1 style="margin-bottom: 10px; font-weight: 900; letter-spacing: -1px;">XQ ULTRA</h1>
-        <p style="color: #636e72; margin-bottom: 30px;">Güvenli ID Sistemi v7.0</p>
+    <div id="authOverlay">
+        <div style="text-align:center; width: 350px;">
+            <h1 style="font-weight:900; font-size: 2.5rem;">XQ ULTRA</h1>
+            <p style="color: #636e72; margin-bottom: 20px;">v8.0 Professional Edition</p>
+            <input type="text" id="username" class="xq-input" style="width:100%; margin-bottom:10px;" placeholder="Kullanıcı Adı">
+            <button class="btn btn-primary" style="width:100%;" onclick="startApp()">SİSTEME GİRİŞ YAP</button>
+        </div>
+    </div>
+
+    <nav class="server-bar">
+        <div class="server-icon" onclick="createServer()">+</div>
+        <div id="serverList"></div>
+    </nav>
+
+    <aside class="channel-sidebar">
+        <h3 id="serverTitle" style="font-size: 0.9rem; margin-bottom: 15px;">Sunucu Seçin</h3>
+        <div style="font-size: 0.7rem; color: #72767d; margin-bottom: 5px;">METİN KANALLARI</div>
+        <div id="textChannels"></div>
         
-        <div id="loginForm">
-            <input type="email" id="email" class="xq-input" placeholder="E-posta">
-            <input type="password" id="pass" class="xq-input" placeholder="Şifre">
-            <button class="btn-main" onclick="handleAuth('login')">OTURUM AÇ</button>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: #8b949e; cursor: pointer;" onclick="toggleForm()">Hesabın yok mu? Kayıt Ol</p>
-        </div>
+        <div style="font-size: 0.7rem; color: #72767d; margin: 15px 0 5px 0;">SES KANALLARI</div>
+        <div id="voiceChannels"></div>
 
-        <div id="registerForm" style="display: none;">
-            <input type="text" id="regUser" class="xq-input" placeholder="Kullanıcı Adı">
-            <input type="email" id="regEmail" class="xq-input" placeholder="E-posta">
-            <input type="password" id="regPass" class="xq-input" placeholder="Şifre">
-            <button class="btn-main" onclick="handleAuth('register')" style="background: var(--xq-accent); color: #000;">HESAP OLUŞTUR</button>
-            <p style="margin-top: 15px; font-size: 0.8rem; color: #8b949e; cursor: pointer;" onclick="toggleForm()">Geri Dön</p>
+        <div style="margin-top:auto; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 10px;">
+            <div id="meName" style="font-weight: bold; font-size: 0.8rem;"></div>
+            <div id="meID" style="font-size: 0.6rem; color: var(--xq-accent);"></div>
+            <button class="btn btn-stream" style="width:100%; margin-top:10px; font-size: 0.7rem;" onclick="toggleScreenShare()">EKRAN PAYLAŞ</button>
         </div>
-    </div>
+    </aside>
 
-    <div id="app">
-        <div class="sidebar">
-            <p style="font-size: 0.7rem; color: #636e72; margin-bottom: 5px;">SENİN KİMLİĞİN:</p>
-            <div class="id-badge" id="myID" onclick="copyMyID()">Yükleniyor...</div>
-            <button class="share-btn" onclick="shareToWhatsapp()">ID'yi WhatsApp'ta Paylaş</button>
-            
-            <hr style="border: 0; border-top: 1px solid var(--xq-glass); margin: 20px 0;">
-            
-            <input type="text" id="targetID" class="xq-input" style="font-size: 0.8rem; padding: 10px;" placeholder="Arkadaş ID'si gir (xqm_...)">
-            <button class="btn-main" style="padding: 10px; font-size: 0.8rem;" onclick="addFriend()">ARKADAŞ EKLE</button>
-
-            <div class="contact-list" id="contacts"></div>
-            <button class="btn-main" style="background: #ff4757; margin-top: 10px;" onclick="location.reload()">ÇIKIŞ YAP</button>
+    <main class="main-app">
+        <div class="stream-area" id="streamContainer">
+            <video id="localVideo" autoplay muted></video>
+            <div style="position:absolute; top:10px; right:10px; background:red; padding:2px 8px; border-radius:5px; font-size:0.7rem;">CANLI</div>
         </div>
-
-        <div class="chat-area">
-            <div id="chatHeader" style="padding: 20px; background: var(--xq-side); border-bottom: 1px solid var(--xq-glass); font-weight: 600;">
-                Bir görüşme seçin
-            </div>
-            <div class="messages" id="msgBox"></div>
-            <div class="input-box">
-                <input type="text" id="msgInput" class="xq-input" style="margin:0" placeholder="Mesajınızı yazın...">
-                <button class="btn-main" style="width: 100px;" onclick="sendMsg()">GÖNDER</button>
-            </div>
+        <div class="chat-area" id="chatBox"></div>
+        <div class="input-box">
+            <input type="text" id="msgInput" class="xq-input" placeholder="Mesaj gönder...">
+            <button class="btn btn-primary" onclick="sendMsg()">GÖNDER</button>
         </div>
-    </div>
+    </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, get } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, serverTimestamp, remove } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
         const firebaseConfig = { 
             apiKey: "AIzaSyBQdsC8VuoBnFyOLWavV3C8GXomSzDXUzw", 
             databaseURL: "https://des-store-c93e0-default-rtdb.europe-west1.firebasedatabase.app" 
         };
         const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
         const db = getDatabase(app);
 
-        let currentUser = null;
-        let activeChatID = null;
+        let myData = { name: "", id: "" };
+        let activeServer = "global_lobby";
+        let activeChannel = "genel";
+        let localStream = null;
 
-        // FORM DEĞİŞTİRME
-        window.toggleForm = () => {
-            const login = document.getElementById('loginForm');
-            const reg = document.getElementById('registerForm');
-            login.style.display = login.style.display === 'none' ? 'block' : 'none';
-            reg.style.display = reg.style.display === 'none' ? 'block' : 'none';
+        window.startApp = () => {
+            const name = document.getElementById('username').value;
+            if(!name) return;
+            myData.name = name;
+            myData.id = "xqm_" + Math.random().toString(36).substr(2, 9);
+            document.getElementById('meName').innerText = name;
+            document.getElementById('meID').innerText = myData.id;
+            document.getElementById('authOverlay').style.display = 'none';
+            initApp();
         };
 
-        // HESAP İŞLEMLERİ
-        window.handleAuth = async (type) => {
-            try {
-                if(type === 'register') {
-                    const email = document.getElementById('regEmail').value;
-                    const pass = document.getElementById('regPass').value;
-                    const user = document.getElementById('regUser').value;
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    const customID = `xqm_1.1rfg-${Math.random().toString(36).substr(2, 16)}`;
-                    await set(ref(db, `users/${res.user.uid}`), { username: user, xq_id: customID, email: email });
-                } else {
-                    const email = document.getElementById('email').value;
-                    const pass = document.getElementById('pass').value;
-                    await signInWithEmailAndPassword(auth, email, pass);
-                }
-            } catch (e) { alert("Hata: " + e.message); }
-        };
-
-        // OTURUM TAKİBİ
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                currentUser = user;
-                const snap = await get(ref(db, `users/${user.uid}`));
-                const data = snap.val();
-                document.getElementById('myID').innerText = data.xq_id;
-                document.getElementById('auth').style.display = 'none';
-                document.getElementById('app').style.display = 'flex';
-                loadContacts();
-            }
-        });
-
-        // ARKADAŞ EKLEME (ID İLE)
-        window.addFriend = async () => {
-            const id = document.getElementById('targetID').value.trim();
-            if(!id.startsWith('xqm_')) return alert("Geçersiz ID formatı!");
-            
-            // Tüm kullanıcıları tara (ID eşleşmesi için)
-            const usersSnap = await get(ref(db, 'users'));
-            let targetUID = null;
-            usersSnap.forEach(u => { if(u.val().xq_id === id) targetUID = u.key; });
-
-            if(targetUID) {
-                await set(ref(db, `users/${currentUser.uid}/friends/${targetUID}`), { xq_id: id });
-                alert("Arkadaş eklendi!");
-                loadContacts();
-            } else { alert("Kullanıcı bulunamadı!"); }
-        };
-
-        // WHATSAPP PAYLAŞIM
-        window.shareToWhatsapp = () => {
-            const myID = document.getElementById('myID').innerText;
-            const text = `XQ Ultra Messenger üzerinden benimle bağlantı kur! ID'm: ${myID}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`);
-        };
-
-        window.copyMyID = () => {
-            navigator.clipboard.writeText(document.getElementById('myID').innerText);
-            alert("ID Kopyalandı!");
-        };
-
-        // MESAJLAŞMA MOTORU
-        function loadContacts() {
-            onValue(ref(db, `users/${currentUser.uid}/friends`), (snap) => {
-                const list = document.getElementById('contacts');
-                list.innerHTML = "";
-                snap.forEach(f => {
-                    const div = document.createElement('div');
-                    div.className = "contact-item";
-                    div.innerText = f.val().xq_id;
-                    div.onclick = () => openChat(f.key, f.val().xq_id);
-                    list.appendChild(div);
-                });
-            });
+        function initApp() {
+            // Sunucu listesini dinle
+            loadChannels();
+            syncChat();
         }
 
-        window.openChat = (uid, xq_id) => {
-            activeChatID = uid;
-            document.getElementById('chatHeader').innerText = `Sohbet: ${xq_id}`;
-            const chatKey = [currentUser.uid, uid].sort().join('_');
-            onValue(ref(db, `chats/${chatKey}`), (snap) => {
-                const box = document.getElementById('msgBox');
+        window.createServer = () => {
+            const sName = prompt("Sunucu Adı:");
+            if(sName) {
+                const sID = "srv_" + Math.random().toString(36).substr(2, 5);
+                set(ref(db, `servers/${sID}`), { name: sName, owner: myData.id });
+                set(ref(db, `servers/${sID}/channels/genel`), { type: "text", private: false });
+            }
+        };
+
+        function loadChannels() {
+            const textZone = document.getElementById('textChannels');
+            const voiceZone = document.getElementById('voiceChannels');
+            
+            // Örnek Sabit Kanallar
+            textZone.innerHTML = `<div class="channel-item active" onclick="switchChannel('genel')"># genel</div>`;
+            textZone.innerHTML += `<div class="channel-item" onclick="switchChannel('özel', true)">🔒 özel-şifreli</div>`;
+            voiceZone.innerHTML = `<div class="channel-item" onclick="joinVoice('ses-1')">🔊 Ses Odası 1</div>`;
+        }
+
+        window.switchChannel = (name, isPrivate = false) => {
+            if(isPrivate) {
+                const pw = prompt("Oda Şifresi:");
+                if(pw !== "1234") return alert("Hatalı Şifre!"); // Örnek şifre mantığı
+            }
+            activeChannel = name;
+            document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('active'));
+            syncChat();
+        };
+
+        // EKRAN PAYLAŞIMI VE CANLI YAYIN
+        window.toggleScreenShare = async () => {
+            const container = document.getElementById('streamContainer');
+            if(!localStream) {
+                try {
+                    localStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                    document.getElementById('localVideo').srcObject = localStream;
+                    container.style.display = 'block';
+                    // Kick Sistemi Simülasyonu
+                    push(ref(db, `chats/${activeChannel}`), { sender: "SİSTEM", text: `🚨 ${myData.name} yayına başladı!`, type: "system" });
+                } catch (e) { console.error(e); }
+            } else {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+                container.style.display = 'none';
+            }
+        };
+
+        // CHAT & KICK SİSTEMİ
+        window.sendMsg = () => {
+            const txt = document.getElementById('msgInput').value;
+            if(!txt) return;
+
+            // Kick Komutu (Sadece Owner/Mod için geliştirilebilir)
+            if(txt.startsWith("/kick ")) {
+                const target = txt.split(" ")[1];
+                push(ref(db, `chats/${activeChannel}`), { sender: "SİSTEM", text: `🚫 ${target} sunucudan atıldı!`, type: "system" });
+            } else {
+                push(ref(db, `chats/${activeChannel}`), {
+                    sender: myData.name,
+                    text: txt,
+                    timestamp: serverTimestamp()
+                });
+            }
+            document.getElementById('msgInput').value = "";
+        };
+
+        function syncChat() {
+            onValue(ref(db, `chats/${activeChannel}`), (snap) => {
+                const box = document.getElementById('chatBox');
                 box.innerHTML = "";
                 snap.forEach(m => {
                     const d = m.val();
                     const div = document.createElement('div');
-                    div.className = `msg ${d.sender === currentUser.uid ? 'msg-me' : 'msg-other'}`;
-                    div.innerText = d.text;
+                    div.style.marginBottom = "8px";
+                    div.innerHTML = `<b style="color:${d.type==='system'?'var(--xq-danger)':'var(--xq-primary)'}">${d.sender}:</b> ${d.text}`;
                     box.appendChild(div);
                 });
                 box.scrollTop = box.scrollHeight;
             });
-        };
-
-        window.sendMsg = () => {
-            const txt = document.getElementById('msgInput').value;
-            if(!txt || !activeChatID) return;
-            const chatKey = [currentUser.uid, activeChatID].sort().join('_');
-            push(ref(db, `chats/${chatKey}`), { sender: currentUser.uid, text: txt, time: Date.now() });
-            document.getElementById('msgInput').value = "";
-        };
+        }
     </script>
 </body>
 </html>
