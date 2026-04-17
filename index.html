@@ -3,60 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XQ Messenger Ultra | XQ Studio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>XQ Messenger Ultra | XQ Studio Professional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
     <style>
-        :root { --xq-bg: #050608; --xq-side: #0e1117; --xq-primary: #5865f2; --xq-accent: #00ff9d; --xq-text: #e1e1e1; }
-        * { box-sizing: border-box; }
-        body { font-family: 'Outfit', sans-serif; background: var(--xq-bg); color: var(--xq-text); margin: 0; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        
-        /* AUTH UI */
-        .auth-card { background: var(--xq-side); padding: 40px; border-radius: 25px; width: 95%; max-width: 500px; border: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        .legal-box { background: #000; padding: 15px; border-radius: 12px; height: 200px; overflow-y: auto; font-size: 0.85rem; text-align: left; margin: 20px 0; border: 1px solid #1f232c; color: #8b949e; line-height: 1.6; }
-        .xq-input { width: 100%; background: #000; border: 1px solid #2d3436; color: white; padding: 15px; border-radius: 12px; margin-bottom: 15px; font-size: 1rem; }
-        .btn-xq { width: 100%; padding: 15px; border-radius: 12px; border: none; background: linear-gradient(135deg, #5865f2, #a052ff); color: white; font-weight: 800; cursor: pointer; transition: 0.3s; }
-        .btn-xq:disabled { opacity: 0.3; cursor: not-allowed; }
+        /* XQ STUDIO CORE UI DESIGN */
+        :root {
+            --xq-bg: #050608;
+            --xq-side: #0e1117;
+            --xq-primary: #5865f2;
+            --xq-accent: #00ff9d;
+            --xq-text: #e1e1e1;
+            --xq-danger: #ff4757;
+            --xq-glass: rgba(255, 255, 255, 0.03);
+        }
 
-        /* APP UI */
-        #mainApp { display: none; width: 100%; height: 100vh; flex-direction: column; }
-        .chat-area { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 10px; background: #080a0f; }
-        .msg { padding: 12px 18px; border-radius: 15px; max-width: 75%; font-size: 0.95rem; background: var(--xq-side); align-self: flex-start; }
-        .me { align-self: flex-end; background: var(--xq-primary); }
-        .controls { padding: 20px; background: var(--xq-side); display: flex; gap: 10px; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        
+        body { background: var(--xq-bg); color: var(--xq-text); height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+        /* GİRİŞ EKRANI (AUTH) */
+        .auth-container { width: 100%; max-width: 480px; padding: 40px; background: var(--xq-side); border-radius: 30px; border: 1px solid var(--xq-glass); box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; z-index: 10; transition: 0.5s; }
+        
+        .logo-area h1 { font-weight: 900; font-size: 2.5rem; letter-spacing: -1px; background: linear-gradient(90deg, var(--xq-primary), var(--xq-accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        
+        .legal-scroll { background: #000; height: 180px; overflow-y: scroll; padding: 15px; border-radius: 15px; border: 1px solid #1f232c; font-size: 0.8rem; line-height: 1.6; text-align: left; margin: 20px 0; color: #8b949e; }
+        
+        .xq-input-group { position: relative; margin-bottom: 20px; }
+        .xq-input { width: 100%; background: #000; border: 1px solid #2d3436; color: #fff; padding: 16px; border-radius: 14px; outline: none; transition: 0.3s; font-size: 1rem; }
+        .xq-input:focus { border-color: var(--xq-primary); box-shadow: 0 0 15px rgba(88, 101, 242, 0.2); }
+        
+        .btn-main { width: 100%; padding: 16px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--xq-primary), #a052ff); color: #fff; font-weight: 700; cursor: pointer; transition: 0.4s; transform: translateY(0); }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(88, 101, 242, 0.4); }
+        .btn-main:disabled { opacity: 0.2; transform: none; cursor: not-allowed; }
+
+        /* ANA UYGULAMA (CHAT & MUSIC) */
+        #appFrame { display: none; width: 100%; height: 100vh; flex-direction: row; background: #000; }
+        
+        .sidebar { width: 300px; background: var(--xq-side); border-right: 1px solid var(--xq-glass); display: flex; flex-direction: column; padding: 20px; }
+        
+        .main-chat { flex: 1; display: flex; flex-direction: column; background: var(--xq-bg); }
+        
+        .messages-container { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        
+        .message-bubble { max-width: 70%; padding: 14px 20px; border-radius: 20px; font-size: 0.95rem; line-height: 1.4; position: relative; }
+        .msg-me { align-self: flex-end; background: var(--xq-primary); color: white; border-bottom-right-radius: 4px; }
+        .msg-other { align-self: flex-start; background: var(--xq-side); border-bottom-left-radius: 4px; border: 1px solid var(--xq-glass); }
+        
+        .input-bar { padding: 25px; background: var(--xq-side); display: flex; gap: 15px; border-top: 1px solid var(--xq-glass); }
+        
+        /* SPOTIFY MINI PLAYER */
+        .spotify-card { background: #1db954; color: black; padding: 15px; border-radius: 15px; margin-top: auto; display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 0.85rem; }
+
+        /* ANIMASYONLAR */
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
     </style>
 </head>
 <body>
 
-    <div class="auth-card" id="authSection">
-        <h1 style="background: linear-gradient(90deg, #5865f2, #00ff9d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">XQ ULTRA</h1>
-        <div class="legal-box" id="legalContent">
-            <b>T.C. ANAYASA VE SİBER GÜVENLİK BİLDİRİMİ:</b><br><br>
-            İşbu uygulama XQ Studio bünyesinde geliştirilmiştir. TCK ve Anayasa'nın ilgili maddeleri gereği; terör, darbe, saldırı ve taciz içerikli tüm yazışmalar <b>bro635756@gmail.com</b> adresine raporlanmaktadır.
+    <div class="auth-container fade-in" id="authBox">
+        <div class="logo-area">
+            <h1>XQ ULTRA</h1>
+            <p style="color: #636e72;">Siber Denetimli Güvenli Mesajlaşma</p>
         </div>
-        <label style="display:block; margin-bottom:15px; cursor:pointer; font-size:0.9rem;">
-            <input type="checkbox" id="accept"> Şartları ve siber denetimi onaylıyorum.
-        </label>
-        <input type="email" id="email" class="xq-input" placeholder="E-posta adresiniz">
-        <button class="btn-xq" id="sendBtn" disabled onclick="sendCode()">9 HANELİ KOD GÖNDER</button>
-        
-        <div id="otpArea" style="display:none; margin-top:20px;">
-            <input type="number" id="otp" class="xq-input" placeholder="000 000 000">
-            <button class="btn-xq" onclick="verify()">SİSTEME GİRİŞ</button>
+
+        <div class="legal-scroll" id="legalTxt">
+            <b>ANAYASAL BİLGİLENDİRME & KULLANIM ŞARTLARI:</b><br><br>
+            1. T.C. Anayasası Madde 26 ve TCK ilgili maddeleri uyarınca; terör, darbe girişimi, toplumsal infial yaratacak içerikler, çocuk istismarı ve taciz içerikli paylaşımlar yapmak kesinlikle yasaktır.<br><br>
+            2. XQ Siber Denetçi (Astrix Engine) anlık olarak tüm kelimeleri filtreler. İhlal tespiti durumunda IP adresiniz ve mesaj içeriğiniz <b>bro635756@gmail.com</b> adresine raporlanır.<br><br>
+            3. 9 haneli doğrulama kodu kullanılarak sisteme giriş yapıldığında bu şartlar kabul edilmiş sayılır.
+        </div>
+
+        <div class="xq-input-group">
+            <label style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px; cursor: pointer; font-size: 0.9rem;">
+                <input type="checkbox" id="legalCheck" style="width: 18px; height: 18px;"> Maddeleri okudum ve kabul ediyorum.
+            </label>
+            <input type="email" id="userEmail" class="xq-input" placeholder="E-posta adresiniz">
+        </div>
+
+        <button class="btn-main" id="otpBtn" disabled onclick="handleOTP()">9 HANELİ KOD GÖNDER</button>
+
+        <div id="verifyArea" style="display: none; margin-top: 25px;">
+            <input type="number" id="otpInput" class="xq-input" placeholder="Kodu Girin (000 000 000)">
+            <button class="btn-main" onclick="accessApp()" style="background: var(--xq-accent); color: #000;">SİSTEME SIZ</button>
         </div>
     </div>
 
-    <div id="mainApp">
-        <div class="chat-area" id="chat"></div>
-        <div class="controls">
-            <input type="text" id="msg" class="xq-input" style="margin:0" placeholder="Mesaj... (Spotify ve Denetçi Aktif)">
-            <button class="btn-xq" style="width:100px" onclick="sendMessage()">GÖNDER</button>
+    <div id="appFrame">
+        <div class="sidebar">
+            <h2 style="font-size: 1.2rem; margin-bottom: 20px;">XQ Studio Panel</h2>
+            <div style="flex: 1;">
+                <p style="font-size: 0.8rem; color: #636e72;">AKTİF KULLANICI:</p>
+                <p id="displayUser" style="color: var(--xq-accent); font-weight: 700; margin-bottom: 20px;"></p>
+                
+                <hr style="border: 0; border-top: 1px solid var(--xq-glass); margin: 20px 0;">
+                
+                <p style="font-size: 0.8rem; color: #636e72; margin-bottom: 10px;">SİBER DENETÇİ DURUMU:</p>
+                <div style="display: flex; align-items: center; gap: 8px; color: var(--xq-accent);">
+                    <div style="width: 8px; height: 8px; background: var(--xq-accent); border-radius: 50%;"></div>
+                    <span>Aktif (logbase.xml bağlı)</span>
+                </div>
+            </div>
+
+            <div class="spotify-card">
+                <img src="https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Black.png" width="70" alt="">
+                <span>Müzik Sistemi Aktif</span>
+            </div>
+        </div>
+
+        <div class="main-chat">
+            <div class="messages-container" id="msgBox"></div>
+            <div class="input-bar">
+                <input type="text" id="chatInput" class="xq-input" style="margin:0" placeholder="Bir mesaj yazın veya müzik arayın...">
+                <button class="btn-main" style="width: 120px;" onclick="postMessage()">GÖNDER</button>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
+        import { getDatabase, ref, push, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
+        // FIREBASE CONFIG
         const firebaseConfig = { 
             apiKey: "AIzaSyBQdsC8VuoBnFyOLWavV3C8GXomSzDXUzw", 
             databaseURL: "https://des-store-c93e0-default-rtdb.europe-west1.firebasedatabase.app" 
@@ -64,76 +132,114 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        const SPOTIFY_ID = '1a5def3fab8142a79a1d48cd7c260751';
-        const RESEND_KEY = 're_29BPLbT4_CA6DrRuvHfAK2f7XJgiarAfR';
-        let generatedOTP = "";
-        let userEmail = "";
+        // XQ STUDIO SECRETS
+        const RESEND_KEY = "re_29BPLbT4_CA6DrRuvHfAK2f7XJgiarAfR";
+        const SPOTIFY_ID = "1a5def3fab8142a79a1d48cd7c260751";
+        let targetOTP = "";
+        let sessionMail = "";
 
-        document.getElementById('accept').onchange = (e) => document.getElementById('sendBtn').disabled = !e.target.checked;
+        // UI LOGIC
+        const check = document.getElementById('legalCheck');
+        const otpBtn = document.getElementById('otpBtn');
+        check.onchange = () => otpBtn.disabled = !check.checked;
 
-        window.sendCode = async () => {
-            userEmail = document.getElementById('email').value;
-            generatedOTP = Math.floor(100000000 + Math.random() * 900000000).toString();
+        // 9 HANELİ KOD MOTORU
+        window.handleOTP = async () => {
+            sessionMail = document.getElementById('userEmail').value;
+            if(!sessionMail.includes('@')) return alert("Geçerli bir mail gir!");
+
+            targetOTP = Math.floor(100000000 + Math.random() * 900000000).toString();
             
-            await fetch('https://api.resend.com/emails', {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    from: 'XQ-Auth <onboarding@resend.dev>',
-                    to: [userEmail],
-                    subject: 'XQ Ultra Güvenlik Kodu',
-                    html: `Kodunuz: <b>${generatedOTP}</b>. XQ Studio güvencesiyle.`
-                })
-            });
-            document.getElementById('otpArea').style.display = 'block';
-            alert("9 haneli kod mailinize gönderildi.");
-        };
-
-        window.verify = () => {
-            if(document.getElementById('otp').value === generatedOTP) {
-                document.getElementById('authSection').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'flex';
-                loadChat();
-            }
-        };
-
-        async function siberDenetle(mesaj) {
-            const yasakli = ["terör", "darbe", "saldırı", "tecavüz", "taciz"];
-            if(yasakli.some(k => mesaj.toLowerCase().includes(k))) {
+            try {
                 await fetch('https://api.resend.com/emails', {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        from: 'SiberDenetci@resend.dev',
-                        to: ['bro635756@gmail.com'],
-                        subject: '⚠️ İHLAL TESPİTİ',
-                        html: `<b>Kullanıcı:</b> ${userEmail}<br><b>Mesaj:</b> ${mesaj}`
+                        from: 'XQ-Auth <onboarding@resend.dev>',
+                        to: [sessionMail],
+                        subject: 'XQ Ultra Güvenlik Kodu',
+                        html: `<div style="background:#0e1117; color:#fff; padding:30px; border-radius:20px; font-family:sans-serif;">
+                                <h2 style="color:#5865f2">XQ ULTRA GİRİŞ</h2>
+                                <p>Sisteme erişim kodunuz:</p>
+                                <h1 style="letter-spacing:5px; background:#000; padding:10px; display:inline-block;">${targetOTP}</h1>
+                                <p style="font-size:0.8rem; color:#636e72;">Bu kod XQ Studio siber denetim onayıdır.</p>
+                               </div>`
                     })
                 });
-            }
-        }
-
-        window.sendMessage = () => {
-            const val = document.getElementById('msg').value;
-            siberDenetle(val);
-            push(ref(db, 'messages'), { email: userEmail, text: val, time: Date.now() });
-            document.getElementById('msg').value = "";
+                document.getElementById('verifyArea').style.display = 'block';
+                alert("Kod mailine uçuruldu!");
+            } catch (e) { alert("Hata: " + e.message); }
         };
 
-        function loadChat() {
-            onValue(ref(db, 'messages'), (snap) => {
-                const chat = document.getElementById('chat');
-                chat.innerHTML = "";
-                snap.forEach(m => {
-                    const data = m.val();
-                    const div = document.createElement('div');
-                    div.className = `msg ${data.email === userEmail ? 'me' : ''}`;
-                    div.innerText = `${data.email.split('@')[0]}: ${data.text}`;
-                    chat.appendChild(div);
+        // SİSTEME ERİŞİM
+        window.accessApp = () => {
+            const typed = document.getElementById('otpInput').value;
+            if(typed === targetOTP) {
+                document.getElementById('authBox').style.display = 'none';
+                document.getElementById('appFrame').style.display = 'flex';
+                document.getElementById('displayUser').innerText = sessionMail;
+                initMessenger();
+            } else {
+                alert("Kod hatalı! XQ Siber Denetçi erişimi reddetti.");
+            }
+        };
+
+        // SİBER DENETÇİ MOTORU (LOGBASE)
+        async function runCyberAudit(msg) {
+            const forbidden = ["terör", "darbe", "saldırı", "tecavüz", "taciz", "suikast"];
+            const isIllegal = forbidden.some(word => msg.toLowerCase().includes(word));
+
+            if(isIllegal) {
+                // Gizli Raporlama Sistemi
+                await fetch('https://api.resend.com/emails', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${RESEND_KEY}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        from: 'CyberAudit@resend.dev',
+                        to: ['bro635756@gmail.com'],
+                        subject: '🚨 GÜVENLİK İHLALİ TESPİT EDİLDİ',
+                        html: `<b>Kullanıcı:</b> ${sessionMail}<br><b>Mesaj:</b> ${msg}<br><b>Zaman:</b> ${new Date().toLocaleString()}`
+                    })
                 });
-                chat.scrollTop = chat.scrollHeight;
+                return false;
+            }
+            return true;
+        }
+
+        // MESSENGER CORE
+        function initMessenger() {
+            onValue(ref(db, 'messages'), (snapshot) => {
+                const box = document.getElementById('msgBox');
+                box.innerHTML = "";
+                snapshot.forEach(child => {
+                    const data = child.val();
+                    const div = document.createElement('div');
+                    div.className = `message-bubble ${data.sender === sessionMail ? 'msg-me' : 'msg-other'}`;
+                    div.innerHTML = `<small style="display:block; font-size:0.6rem; opacity:0.6;">${data.sender}</small>${data.text}`;
+                    box.appendChild(div);
+                });
+                box.scrollTop = box.scrollHeight;
             });
         }
+
+        window.postMessage = async () => {
+            const input = document.getElementById('chatInput');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            // Denetimden geç
+            const secure = await runCyberAudit(txt);
+            
+            // Firebase Kayıt
+            push(ref(db, 'messages'), {
+                sender: sessionMail,
+                text: txt,
+                timestamp: serverTimestamp(),
+                status: secure ? "safe" : "flagged"
+            });
+
+            input.value = "";
+        };
     </script>
 </body>
 </html>
